@@ -1,0 +1,24 @@
+#userinputs {
+    position: absolute;
+    bottom: 20px;
+    left: 0px;
+  }
+  .inputs-type .type {
+    position: absolute;
+    bottom: 0px;
+  }
+  .inputs-type select {
+    position: absolute;
+    bottom: 0px;
+    left: 40px;
+  }
+  .userinput1 button {
+    position: absolute;
+    bottom: 0px;
+    right: 10px;
+  }
+  .textLength {
+    position: absolute;
+    right: 60px;
+    bottom: 1px;
+  }
