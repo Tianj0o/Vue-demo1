@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <ul id="list">
+
+    </ul>
+    <input type="text" id="message" placeholder="请输入消息">
+    <button id="send">发送</button>
+    <script>
+        ;(function(doc){
+            const init =()=>{
+                blind()
+            }
+            const ws = new WebSocket('ws:localhost:8081')
+            
+            function blind(){
+                const messageList = doc.querySelector('#list')
+                const message = doc.querySelector('#message')
+                const sendBtn = doc.querySelector('#send')
+                const username = localStorage.getItem('username')
+                sendBtn.addEventListener('click',()=>{
+                    const usermessage = message.value;
+                    
+                    if(!username){
+                        location.href = 'entry.html'
+                        return 
+                    }
+                    ws.send(JSON.stringify({
+                        username:username,
+                        message:usermessage,
+                        time:new Date().toLocaleTimeString()
+                    }))
+                })
+                ws.addEventListener('open',(e)=>{
+                    console.log('websocket open',e)
+                
+                })
+                ws.addEventListener('close',(e)=>{
+                    console.log('websocket close',e)
+                })
+                ws.addEventListener('error',(e)=>{
+                    console.log('websocket error',e)
+                })
+                ws.addEventListener('message',(e)=>{
+                    console.log('websocket messages',e)
+                    const mes = JSON.parse(e.data)
+                    messageList.appendChild(creatmessage(mes))
+                })
+               
+                function creatmessage(data){
+                    const {username,message,time} = data
+                    const item = doc.createElement('li')
+                    item.innerHTML=`
+                    <p>
+                    <i>${username}</i>
+                    <span>${time}</span>
+                    <p>
+                    <p>${message}</p>
+                    
+                    `
+                    return item
+                }
+            }
+
+            
+            init();
+
+        })(document)
+    </script>
+</body>
+</html>

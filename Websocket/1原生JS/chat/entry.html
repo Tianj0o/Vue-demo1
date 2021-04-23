@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <input type="text" id="username" placeholder="请输入用户名">
+    <button id="enter">进入聊天室</button>
+</head>
+<body>
+    
+    <script>
+        ;((doc,storage,location)=>{
+            const username = doc.querySelector('#username')
+            const enterBtn = doc.querySelector('#enter')
+            enterBtn.addEventListener('click',()=>{
+                if(username.value.trim().length<6){
+                    alert('用户名不小于六位')
+                    return 
+                }
+                storage.setItem('username',username.value)
+                location.href = 'index.html'
+            })    
+
+        })(document,localStorage,location)
+    </script>
+</body>
+</html>
