@@ -1,6 +1,6 @@
 function useWebSocket(handleMessage){
 
-    const ws = new WebSocket('ws://localhost:3030')
+    const ws = new WebSocket('ws://localhost:3040')
     const init = ()=>{
        bindEvent()
     }
