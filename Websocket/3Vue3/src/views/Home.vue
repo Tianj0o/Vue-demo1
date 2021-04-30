@@ -39,7 +39,7 @@
 
 <script>
 // @ is an alias to /src
-import { reactive, onMounted, ref } from "vue";
+import { reactive, onMounted, ref,getCurrentInstance  } from "vue";
 import { useRouter } from "vue-router";
 import { useWebSocket } from "../hooks";
 export default {
@@ -50,17 +50,20 @@ export default {
       msglist: [],
     });
     const router = useRouter();
-
+    let {proxy} = getCurrentInstance()
     const username = localStorage.getItem("username");
 
     const ws = useWebSocket(handleMessage);
 
-    const handlerSentBtnClcik = () => {
+    const handlerSentBtnClcik = async() => {
       const data = {
         name: username,
-        time: new Date().toLocaleString().toString().split("下午")[1],
+        time: new Date().toLocaleTimeString(),
         msg: state.msg,
       };
+      //前端的信息接口
+      
+      const res = await proxy.$http.post('/msg',data)
       //单独显示自己发出去的信息
 
       const msglist = document.querySelector('#msglists')
@@ -125,18 +128,23 @@ export default {
     };
 
     const myref = ref(null);
-    /* const run = ()=>{
+    
+    //获取历史信息 最多20条
 
+    const fetchMsg = async() => {
+      const res = await proxy.$http.get('/msg')
+      console.log(res.data)
     }
-    setInterval(run,1000) */
-    // console.dir(scrollHeight.scrollHeight)
-    // watchEffect(()=>console.log(myref.value))
+    fetchMsg()
     return {
       state,
       handlerSentBtnClcik,
       screenHeight,
       myref,
       handlekeyup,
+      proxy,
+      fetchMsg,
+
     };
   },
 };

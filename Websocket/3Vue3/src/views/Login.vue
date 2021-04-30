@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted,getCurrentInstance } from "vue";
 import { useRouter } from "vue-router";
 export default {
   name: "Login",
@@ -51,20 +51,28 @@ export default {
     const username = ref("");
     const router = useRouter();
 
-    const handleEnterBtnClick = () => {
+    //定义前端接口
+    let {ctx,proxy} = getCurrentInstance()
+
+
+
+    const handleEnterBtnClick = async () => {
       const Username = username.value.trim();
       if (Username.length < 3) {
         alert("昵称必须大于三位");
         return;
       }
       localStorage.setItem("username", Username);
+      const res = await proxy.$http.post('/user',{username:Username})
       router.push("/");
     };
     onMounted(() => {
       setHeight();
+      console.log('1')
       if (localStorage.getItem("username")) {
         router.push("/");
       }
+
     });
     const screenHeight = ref(0);
     const setHeight = () => {
@@ -75,6 +83,8 @@ export default {
       username,
       handleEnterBtnClick,
       screenHeight,
+      ctx,proxy,
+      
     };
   },
 };
