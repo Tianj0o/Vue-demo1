@@ -6,7 +6,7 @@ function useWebSocket(handleMessage){
     }
     function bindEvent(){
         ws.addEventListener('open',(e)=>{
-            console.log('open',e)
+            // console.log('open',e)
         })
         ws.addEventListener('error',(e)=>{
             console.log('error',e)

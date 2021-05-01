@@ -1,6 +1,6 @@
 {
-  "id": "",
-  "name": "",
+  "id": "2524078",
+  "name": "2",
   "font_family": "iconfont",
   "css_prefix_text": "icon-",
   "description": "",
@@ -18,6 +18,13 @@
       "font_class": "xiugaitouxiang",
       "unicode": "e602",
       "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "6282751",
+      "name": "历史记录",
+      "font_class": "lishijilu",
+      "unicode": "e6b0",
+      "unicode_decimal": 59056
     },
     {
       "icon_id": "6496026",

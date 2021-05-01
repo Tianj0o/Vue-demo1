@@ -1,13 +1,29 @@
 <template>
-  <div class="main" :style="'height:' + screenHeight + 'px;'">
+  <div
+    class="main"
+    :style="'height:' + screenHeight + 'px;' + 'width:' + screenWidth + 'px;'"
+  >
     <div class="home" style="display: flex; flex-direction: column">
+
+      <div id="historyMsgs" @click="fetchMsg" style="display: flex; justify-content: center;margin:0.5rem 0;">
+        <span style="">显示历史消息</span>
+        <svg class="icon" aria-hidden="true" style="font-size:1.3rem;margin-left:0.4rem">
+          <use xlink:href="#icon-lishijilu"></use>
+        </svg>
+      </div>
+
       <div
         ref="myref"
         id="chatlist"
         :style="'height:' + 0.9 * screenHeight + 'px;'"
       >
-        <ul id="msglists" style="display: flex; flex-direction: column;">
-          <li v-for="(item, i) in state.msglist" :key="i" style="margin-left:2rem;margin-bottom:0.5rem">
+        <HisMsg :hismsgs="hismsgs"></HisMsg>
+        <ul id="msglists" style="display: flex; flex-direction: column">
+          <li
+            v-for="(item, i) in state.msglist"
+            :key="i"
+            style="margin-left: 2rem; margin-bottom: 0.5rem"
+          >
             <div style="margin: 0.5rem 0">
               <span>{{ item.name }}</span>
 
@@ -25,7 +41,12 @@
           @keyup.enter="handlerSentBtnClcik"
           type="text"
           v-model="state.msg"
-          style="outline: none; padding: 0 1rem;height:2rem;font-size:1.1rem;"
+          style="
+            outline: none;
+            padding: 0 1rem;
+            height: 2rem;
+            font-size: 1.1rem;
+          "
         />
         <button @click="handlerSentBtnClcik">
           <svg class="icon" aria-hidden="true">
@@ -39,48 +60,52 @@
 
 <script>
 // @ is an alias to /src
-import { reactive, onMounted, ref,getCurrentInstance  } from "vue";
+import { reactive, onMounted, ref, getCurrentInstance } from "vue";
 import { useRouter } from "vue-router";
 import { useWebSocket } from "../hooks";
+import HisMsg from "../components/his-msg.vue";
 export default {
   name: "Home",
+  components: {
+    HisMsg,
+  },
   setup() {
     const state = reactive({
       msg: "",
       msglist: [],
     });
     const router = useRouter();
-    let {proxy} = getCurrentInstance()
+    let { proxy } = getCurrentInstance();
     const username = localStorage.getItem("username");
 
     const ws = useWebSocket(handleMessage);
 
-    const handlerSentBtnClcik = async() => {
+    const handlerSentBtnClcik = async () => {
       const data = {
         name: username,
         time: new Date().toLocaleTimeString(),
         msg: state.msg,
       };
       //前端的信息接口
-      
-      const res = await proxy.$http.post('/msg',data)
+
+      const res = await proxy.$http.post("/msg", data);
       //单独显示自己发出去的信息
 
-      const msglist = document.querySelector('#msglists')
-      const myli = document.createElement('li')
-      myli.innerHTML=`
+      const msglist = document.querySelector("#msglists");
+      const myli = document.createElement("li");
+      myli.innerHTML = `
           <li style="display:flex;flex-direction:column;align-items:flex-end;margin-right:2rem;margin-bottom:0.5rem">
             <div style="margin: 0.5rem 0">
-              <span>${ data.name }</span>
+              <span>${data.name}</span>
 
-              <i style="font-size: 0.7rem">${ data.time }</i>
+              <i style="font-size: 0.7rem">${data.time}</i>
             </div>
             <div>
-              <span class="context">${ data.msg }</span>
+              <span class="context">${data.msg}</span>
             </div>
           </li>
-      `
-      msglist.appendChild(myli)
+      `;
+      msglist.appendChild(myli);
       ws.send(JSON.stringify(data));
       state.msg = "";
       // console.log(myref.value.offsetHeight)
@@ -122,29 +147,46 @@ export default {
 
     //监控屏幕高度
     const screenHeight = ref(0);
+    const screenWidth = ref(0);
+
     const setHeight = () => {
       const nowheight = window.innerHeight;
       screenHeight.value = nowheight;
+      const nowwidth = window.innerWidth;
+      screenWidth.value = nowwidth;
     };
 
     const myref = ref(null);
-    
-    //获取历史信息 最多20条
 
-    const fetchMsg = async() => {
-      const res = await proxy.$http.get('/msg')
-      console.log(res.data)
-    }
-    fetchMsg()
+    //获取历史信息 最多20条
+    //不需要响应式
+    const hismsgs = ref([]);
+    const fetchMsg = async () => {
+      const res = await proxy.$http.get("/msg");
+      // console.log(res.data)
+      // console.log((res.data))
+      const length1 = res.data.length;
+      const findata = res.data.slice(length1 - 15, length1);
+      hismsgs.value = findata;
+      console.log(findata);
+      // console.log(hismsgs.value)
+      
+      const hisdiv = document.querySelector('#historyMsgs')
+      hisdiv.style.backgroundColor='#21f3e5'
+      hisdiv.style.color='#999'
+      //将显示历史信息的div隐藏
+    };
+
     return {
       state,
       handlerSentBtnClcik,
       screenHeight,
+      screenWidth,
       myref,
       handlekeyup,
       proxy,
       fetchMsg,
-
+      hismsgs,
     };
   },
 };
@@ -153,12 +195,11 @@ export default {
 
 <style>
 ul {
-  margin:0;
+  margin: 0;
   padding: 0;
 }
 .main {
-  width: 100%;
-  height: 100%;
+  max-width: auto;
   background: url("../assets/1.jpg") no-repeat center center fixed;
   background-size: cover;
 }
