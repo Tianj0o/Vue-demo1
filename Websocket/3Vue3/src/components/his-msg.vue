@@ -1,8 +1,8 @@
 <template>
      <ul  style="display: flex; flex-direction: column;">
-          <li v-for="(item,i) in newhismsgs" :key="i" style="margin-left:2rem;margin-bottom:0.5rem">
+          <li :class="item.name==username ? 'myself':'other'" v-for="(item,i) in newhismsgs" :key="i" style="margin-left:2rem;margin-bottom:0.5rem">
             <div style="margin: 0.5rem 0">
-              <span>{{ item.name }}</span>
+              <span style="margin-right:0.4rem;">{{ item.name }}</span>
 
               <i style="font-size: 0.7rem">{{ item.time }}</i>
             </div>
@@ -25,10 +25,11 @@ export default({
         const newhismsgs = computed({
             get:()=>props.hismsgs
         })
-
-        console.log(newhismsgs)
+        const username=localStorage.getItem('username')
+        
         return {
-            newhismsgs
+            newhismsgs,
+            username
         }
     },
 })

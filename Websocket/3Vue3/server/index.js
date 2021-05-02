@@ -57,9 +57,9 @@ const Server = new Ws.Server({
             ws.on('message',(data)=>{
                 console.log(data)
                 server.clients.forEach((c)=>{
-                if(c!==ws){
+                // if(c!==ws){
                 c.send(data)
-                }
+                // }
             }
                 )
             })

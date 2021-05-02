@@ -18,7 +18,7 @@ module.exports = app => {
         res.send(model)
     })
     router.get('/msg',async (req,res) =>{
-        const model = await msg.find().limit(15)
+        const model = await msg.find()
         res.send(model)
     })
     app.use('/admin/api',router)
